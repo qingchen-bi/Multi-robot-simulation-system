@@ -7,3 +7,6 @@ Please install the Scout robot dependency and Velodyne sensor dependency yoursel
 The code for obtaining the ground truth of robots in Gazebo refers to some of the code in **FAEL**.
 
 $ roslaunch simworld three_scout.launch
+
+For Ubuntu 20.04
+You need to modify the relevant content of CmakeLists.txt in sensor_conversion to "add compile_options (- std=c++14)"
