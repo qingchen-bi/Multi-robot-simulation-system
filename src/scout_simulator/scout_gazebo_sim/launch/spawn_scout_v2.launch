@@ -1,0 +1,43 @@
+<launch>
+    <arg name="x" default="0.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="z" default="0.0"/>
+    <arg name="yaw" default="0.0"/>
+
+    <arg name="robot_namespace" default="/"/>
+
+    <arg name="paused" default="true" />
+    <arg name="use_sim_time" default="true" />
+    <arg name="gui" default="true" />
+    <arg name="headless" default="false" />
+    <arg name="debug" default="true" />
+
+    <include file="$(find scout_description)/launch/scout_v2_stock.launch">
+        <arg name="robot_namespace" value="$(arg robot_namespace)" />
+    </include>
+
+    <node name="spawn_scout_model_$(arg robot_namespace)" pkg="gazebo_ros" type="spawn_model" args="-x $(arg x)
+              -y $(arg y)
+              -z $(arg z)
+              -Y $(arg yaw)
+              -unpause
+              -urdf
+              -param robot_description
+              -model $(arg robot_namespace)" />
+    <!-- load the controllers -->
+    <rosparam file="$(find scout_gazebo_sim)/config/scout_v2_control.yaml" command="load"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" 
+    args="scout_state_controller scout_motor_fr_controller scout_motor_fl_controller scout_motor_rl_controller scout_motor_rr_controller"/>
+  
+   <!-- <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" 
+    args="scout2_joint_publisher scout2_velocity_controller"/> -->
+            <!-- <rosparam command="load" file="$(find scout_control)/config/scout2_control.yaml"/>
+             -->
+
+   <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher">
+   <param name="publish_frequency" type="double" value="20.0" />
+   <param name="use_tf_static" type="bool" value="false" />
+   <param name="tf_prefix" type="string" value="$(arg robot_namespace)"/>
+   </node>
+
+</launch> 

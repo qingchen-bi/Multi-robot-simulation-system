@@ -1,0 +1,81 @@
+<launch>
+
+  <arg name="paused" default="false"/>
+  <arg name="use_sim_time" default="true"/>
+  <arg name="gui" default="true"/>
+  <arg name="headless" default="false"/>
+  <arg name="debug" default="false"/>
+  <arg name="verbose" default="false"/>
+  <arg name="world_name" default="yewai"/>
+
+  <include file="$(find gazebo_ros)/launch/empty_world.launch" >
+    <arg name="paused" value="$(arg paused)"/>
+    <arg name="use_sim_time" value="$(arg use_sim_time)"/>
+    <arg name="gui" value="$(arg gui)"/>
+    <arg name="headless" value="$(arg headless)"/>
+    <arg name="debug" value="$(arg debug)"/>
+    <arg name="verbose" value="$(arg verbose)"/>
+    <arg name="world_name" value="$(find simworld)/worlds/map_$(arg world_name).world"/> 
+  </include>
+
+  <group ns="/robot_1">
+    <include file="$(find scout_gazebo_sim)/launch/spawn_scout_v2.launch">
+      <arg name="x" value="-14"/>
+      <arg name="y" value="-14"/>
+      <arg name="z" value="0.5"/>
+      <arg name="robot_namespace" value="robot_1"/>
+    </include>
+    <node name="slam_sim_output" pkg="sensor_conversion" type="slam_sim_output_node" output="log">
+      <param name="frame_id" value="robot_1/map"/>
+      <param name="child_frame_id" value="robot_1/base_link"/>
+      <param name="down_voxel_size" value="0.1"/>
+      <param name="use_sim_time" value="true"/>
+    </node>
+  </group>
+  <node name="scout_skid_steer_controller_1" pkg="scout_gazebo_sim" type="scout_skid_steer_controller">
+    <param name="robot_namespace" type="string" value="robot_1" />
+  </node>
+  <node pkg="tf" type="static_transform_publisher" name="map_to_r1map" args="0.0 0.0 0.0 0.0 0.0 0.0 /map /robot_1/map 20" />
+
+  <group ns="/robot_2">
+    <include file="$(find scout_gazebo_sim)/launch/spawn_scout_v2.launch">
+      <arg name="x" value="-14"/>
+      <arg name="y" value="-13"/>
+      <arg name="z" value="0.5"/>
+      <arg name="robot_namespace" value="robot_2"/>
+    </include>
+    <node name="slam_sim_output" pkg="sensor_conversion" type="slam_sim_output_node" output="log">
+      <param name="frame_id" value="robot_2/map"/>
+      <param name="child_frame_id" value="robot_2/base_link"/>
+      <param name="down_voxel_size" value="0.1"/>
+      <param name="use_sim_time" value="true"/>
+    </node>
+  </group>
+  <node name="scout_skid_steer_controller_2" pkg="scout_gazebo_sim" type="scout_skid_steer_controller">
+    <param name="robot_namespace" type="string" value="robot_2" />
+  </node>
+  <node pkg="tf" type="static_transform_publisher" name="robot2_to_robot1" args="0.0 1 0 0 0 0 robot_1/map /robot_2/map 20" />
+
+  <group ns="/robot_3">
+    <include file="$(find scout_gazebo_sim)/launch/spawn_scout_v2.launch">
+      <arg name="x" value="-14"/>
+      <arg name="y" value="-12"/>
+      <arg name="z" value="0.5"/>
+      <arg name="robot_namespace" value="robot_3"/>
+    </include>
+    <node name="slam_sim_output" pkg="sensor_conversion" type="slam_sim_output_node" output="log">
+      <param name="frame_id" value="robot_3/map"/>
+      <param name="child_frame_id" value="robot_3/base_link"/>
+      <param name="down_voxel_size" value="0.1"/>
+      <param name="use_sim_time" value="true"/>
+    </node>
+  </group>
+  <node name="scout_skid_steer_controller_3" pkg="scout_gazebo_sim" type="scout_skid_steer_controller">
+    <param name="robot_namespace" type="string" value="robot_3" />
+  </node>
+  <node pkg="tf" type="static_transform_publisher" name="robot3_to_robot1" args="0.0 2 0 0 0 0 robot_1/map /robot_3/map 20" />
+
+  <node pkg="rviz" type="rviz" name="rviz2" args="-d $(find simworld)/config/config.rviz">
+  </node>
+
+</launch>
