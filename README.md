@@ -1,5 +1,5 @@
-**This is a multi robot simulation system suitable for Gazebo, which has been tested under Ubuntu 18.04. 
-This system can be used to support multi robot exploration, navigation, SLAM, and other tasks. **
+This is a multi robot simulation system suitable for Gazebo, which has been tested under Ubuntu 18.04. 
+This system can be used to support multi robot exploration, navigation, SLAM, and other tasks.
 
 This system uses Scout 2.0 robots, where the visualization rendering of the robot body is disabled. 
 Sensors can be selected from VLP-16 and HDL-32. 
